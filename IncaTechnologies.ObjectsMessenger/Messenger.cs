@@ -116,7 +116,7 @@ namespace IncaTechnologies.ObjectsMessenger
             {
                 MessageHub.Default.OnMessengerEvent(this, MessengerEvent.Failed);
 
-                throw new MessageNullException($"{GetType().Name} is never been sent.")
+                throw new MessageNullException($"{GetType().Name} is never been sent.");
             }
 
             return _message;
