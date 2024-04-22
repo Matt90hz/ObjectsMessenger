@@ -4,7 +4,7 @@ Utility class to provide objects comunication.
 ## What it should do?
 - [x] Allow comunication between objects.
 - [x] It should enforce the existance of a message channel. 
-- [ ] Support dependency injection.
+- [x] Support dependency injection.
 - [ ] Support asyncronous comunication. 
 - [x] The comunication should be defined in a self contained object. 
 - [x] Events should be exposed about the comunication process.
@@ -13,6 +13,7 @@ Utility class to provide objects comunication.
 - [x] It should be possible to pick if the message has to be persisted or deleted after delivery. 
 - [x] There should be no memory leaks due to the storing of the sender. 
 - [ ] Only interfaces should be used to interact with the system. 
+- [ ] Should be present a utility to deal with property accessors.
  
 ## How It is done?
 

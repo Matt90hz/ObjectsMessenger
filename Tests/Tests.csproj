@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Example\Example.csproj" />
     <ProjectReference Include="..\IncaTechnologies.ObjectsMessenger\ObjectsMessenger.csproj" />
   </ItemGroup>
 
