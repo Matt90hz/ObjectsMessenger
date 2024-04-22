@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncaTechnologies.ObjectsMessenger", "IncaTechnologies.ObjectsMessenger\IncaTechnologies.ObjectsMessenger.csproj", "{62A83437-55CA-40E5-839B-CFD0C1AEAB19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectsMessenger", "IncaTechnologies.ObjectsMessenger\ObjectsMessenger.csproj", "{62A83437-55CA-40E5-839B-CFD0C1AEAB19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0AB6D03B-10BD-43B6-8E76-B600F7B854E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B6329C6-2B98-4B2F-9B41-57000941A389}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

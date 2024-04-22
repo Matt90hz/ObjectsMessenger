@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<AssemblyName>IncaTecnologies.$(MSBuildProjectName)</AssemblyName>
+	<RootNamespace>IncaTecnologies.$(MSBuildProjectName.Replace(" ", ""))</RootNamespace>
+	<Title>IncaTechnologies Object Messenger</Title>
+	<Authors>IncaTechnologies</Authors>
+	<PackageOutputPath>..\.nupkg</PackageOutputPath>
+	<NeutralLanguage>en</NeutralLanguage>
+	<VersionPrefix>1.0.0</VersionPrefix>
+	<VersionSuffix>beta</VersionSuffix>
+	<Description>Utility class to provide objects comunication.</Description>
+	<Copyright>IncaTechnologies - 2024</Copyright>
+	<PackageProjectUrl>https://github.com/Matt90hz/ObjectsMessenger</PackageProjectUrl>
+	<PackageIcon>D:\IncaTechnologies\IncaTechnologies_logo_128x128.png</PackageIcon>
+	<PackageReadmeFile>..\README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/Matt90hz/ObjectsMessenger.git</RepositoryUrl>
+	<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
+	<FileVersion>$(VersionPrefix)</FileVersion>
+	<PackageLicenseFile>..\LICENSE.txt</PackageLicenseFile>
+	<IncludeSymbols>True</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+  </ItemGroup>
+
+</Project>

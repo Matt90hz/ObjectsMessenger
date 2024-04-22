@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IncaTechnologies.ObjectsMessenger\IncaTechnologies.ObjectsMessenger.csproj" />
+    <ProjectReference Include="..\IncaTechnologies.ObjectsMessenger\ObjectsMessenger.csproj" />
   </ItemGroup>
 
   <ItemGroup>
