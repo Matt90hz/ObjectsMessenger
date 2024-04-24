@@ -6,9 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Example;
-public sealed class CurrentUserMessenger : Messenger<UsersViewModel, ViewModelEditUser, User>
+public sealed class CurrentUserMessenger : Messenger<UsersViewModel, EditUserViewModel, User?>
 {
-    public override bool Preserve => false;
+    public override bool IsMessagePreserved => false;
 
-    protected override User GetMessage(UsersViewModel sender) => sender.CurrentUser ?? new(Guid.Empty);
+    protected override void ReceiveMessage(EditUserViewModel receiver, User? message) => receiver.User = message;
+
+    protected override User? SendMessage(UsersViewModel sender) => sender.CurrentUser;
+
+    override 
 }
