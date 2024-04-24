@@ -4,8 +4,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-	<AssemblyName>IncaTecnologies.$(MSBuildProjectName)</AssemblyName>
-	<RootNamespace>IncaTecnologies.$(MSBuildProjectName.Replace(" ", ""))</RootNamespace>
+	<AssemblyName>IncaTechnologies.$(MSBuildProjectName)</AssemblyName>
+	<RootNamespace>IncaTechnologies.$(MSBuildProjectName.Replace(" ", ""))</RootNamespace>
 	<Title>IncaTechnologies Object Messenger</Title>
 	<Authors>IncaTechnologies</Authors>
 	<PackageOutputPath>..\.nupkg</PackageOutputPath>
@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Include="System.Reactive" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

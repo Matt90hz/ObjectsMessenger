@@ -1,6 +1,6 @@
 ﻿using IncaTechnologies.ObjectsMessenger;
 
-namespace IncaTecnologies.ObjectsMessenger
+namespace IncaTechnologies.ObjectsMessenger
 {
     /// <summary>
     /// Events that <see cref="Messenger"/> can trigger.
@@ -10,15 +10,27 @@ namespace IncaTecnologies.ObjectsMessenger
         /// <summary>
         /// Before sending something.
         /// </summary>
-        Sending, 
+        Sending,
+
+        /// <summary>
+        /// After sending something.
+        /// </summary>
+        Sended,
+
         /// <summary>
         /// Before receiving something.
         /// </summary>
-        Receiving, 
+        Receiving,
+
         /// <summary>
         /// After receiving something.
         /// </summary>
-        Failed 
+        Received,
+
+        /// <summary>
+        /// Somethig went wrong
+        /// </summary>
+        ReceiveFailed 
     }
 
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace IncaTecnologies.ObjectsMessenger
+namespace IncaTechnologies.ObjectsMessenger.Extensions
 {
     /// <summary>
     /// Utility method for DI
@@ -28,7 +28,15 @@ namespace IncaTecnologies.ObjectsMessenger
                 services.AddSingleton(type);
             }
 
-            services.AddSingleton(_ => MessageHub.Default);
+            services.AddSingleton(sp => 
+            { 
+                foreach(var messenger in sp.GetServices<Messenger>())
+                {
+                    MessageHub.Default.RegisterMessenger(messenger);
+                }
+
+                return MessageHub.Default; 
+            });
 
             return services;
         }

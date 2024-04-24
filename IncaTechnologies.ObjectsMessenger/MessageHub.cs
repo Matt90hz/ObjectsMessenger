@@ -1,9 +1,10 @@
 ﻿using IncaTechnologies.ObjectsMessenger;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using System.Text;
 
-namespace IncaTecnologies.ObjectsMessenger
+namespace IncaTechnologies.ObjectsMessenger
 {
 
     /// <summary>
@@ -11,6 +12,9 @@ namespace IncaTecnologies.ObjectsMessenger
     /// </summary>
     public sealed class MessageHub
     {
+        readonly Subject<(Messenger, MessengerEvent)> _events = new Subject<(Messenger, MessengerEvent)>();
+        readonly Subject<(Messenger, Exception)> _errors = new Subject<(Messenger, Exception)>();
+
         /// <summary>
         /// The default message hub manage the events related to the messengers.
         /// Set this object it should never be needed out side testing.
@@ -18,13 +22,29 @@ namespace IncaTecnologies.ObjectsMessenger
         public static MessageHub Default { get; } = new MessageHub();
 
         /// <summary>
-        /// Exposes a way to intercept every action done by the messengers.
+        /// Sequence of events raised by all the registered <see cref="Messenger"/>.
         /// </summary>
-        public event EventHandler<(Messenger, MessengerEvent)>? MessengersEvents;
+        public IObservable<(Messenger, MessengerEvent)> MessengersEvents => _events;
 
-        internal void OnMessengerEvent(Messenger messenger, MessengerEvent messengerEvent) => MessengersEvents?.Invoke(this, (messenger, messengerEvent));
+        /// <summary>
+        /// Sequence of error thrown by all the registered <see cref="Messenger"/>.
+        /// </summary>
+        public IObservable<(Messenger, Exception)> MessengersErrors => _errors;
 
         private MessageHub() { }
+
+        /// <summary>
+        /// Register the <paramref name="messenger"/> in the hub.
+        /// </summary>
+        /// <param name="messenger">The <see cref="Messenger"/> to be registered.</param>
+        /// <returns>It self.</returns>
+        public MessageHub RegisterMessenger(Messenger messenger)
+        {
+            messenger.Events.Subscribe(@event => _events.OnNext((messenger, @event)));
+            messenger.Errors.Subscribe(exception => _errors.OnNext((messenger, exception)));
+
+            return this;
+        }
     }
 
 }
