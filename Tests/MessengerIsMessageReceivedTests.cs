@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Tests.Utililties;
 
 namespace Tests;
 
-public sealed class MessengerReceiveTests
+public sealed class MessengerIsMessageReceivedTests
 {
     [Fact]
-    public void WhenMessageIsSent_ShouldReturnTheValueSent()
+    public void WhenMessageIsReceived_ShouldBeTrue()
     {
         //arrange
         Sender sender = new();
@@ -23,25 +18,25 @@ public sealed class MessengerReceiveTests
         messenger.Receive(receiver);
 
         //assert
-        receiver.Value.Should().Be(sender.Value);
+        messenger.IsMessageReceived.Should().BeTrue();
     }
 
     [Fact]
-    public void WhenMessageIsNotSent_ShouldDoNothing()
+    public void WhenMessageIsNotReceivedYet_ShouldBeFalse()
     {
         //arrange
-        Receiver receiver = new();
+        Sender sender = new();
         GuidMessenger messenger = new();
 
         //act
-        messenger.Receive(receiver);
+        messenger.Send(sender);
 
         //assert
-        receiver.Value.Should().Be(Guid.Empty);
+        messenger.IsMessageReceived.Should().BeFalse();
     }
 
     [Fact]
-    public void WhenMessageIsAreadyReceived_ShouldDoNothing()
+    public void WhenMessageIsReceivedAndThenResent_ShouldBeFalse()
     {
         //arrange
         Sender sender = new();
@@ -51,12 +46,9 @@ public sealed class MessengerReceiveTests
         //act
         messenger.Send(sender);
         messenger.Receive(receiver);
-
-        receiver.Value = Guid.Empty;
-        messenger.Receive(receiver);
+        messenger.Send(sender);
 
         //assert
-        receiver.Value.Should().Be(Guid.Empty);
+        messenger.IsMessageReceived.Should().BeFalse();
     }
-
 }
