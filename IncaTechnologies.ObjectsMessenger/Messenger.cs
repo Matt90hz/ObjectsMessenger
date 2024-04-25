@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using IncaTechnologies.ObjectsMessenger;
-using IncaTechnologies.ObjectsMessenger;
 using System;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
@@ -99,7 +98,7 @@ namespace IncaTechnologies.ObjectsMessenger
                 return this;
             }
 
-            if (IsMessagePreserved && IsMessageReceived) 
+            if (!IsMessagePreserved && IsMessageReceived) 
             {
                 _events.OnNext(MessengerEvent.ReceiveFailed);
                 _errors.OnNext(new MessageAlreadyReceivedException());
