@@ -58,5 +58,4 @@ public sealed class MessengerReceiveTests
         //assert
         receiver.Value.Should().Be(Guid.Empty);
     }
-
 }
