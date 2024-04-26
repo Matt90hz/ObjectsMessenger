@@ -32,5 +32,4 @@ namespace IncaTechnologies.ObjectsMessenger
         /// </summary>
         ReceiveFailed 
     }
-
 }
