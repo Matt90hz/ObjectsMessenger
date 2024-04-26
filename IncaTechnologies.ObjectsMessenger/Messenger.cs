@@ -199,6 +199,8 @@ namespace IncaTechnologies.ObjectsMessenger
 
                 return Default;
             }
+#warning This is not a good behavior to think about it
+            _events.OnNext(MessengerEvent.Received);
 
             return _message;
         }
