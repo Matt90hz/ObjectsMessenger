@@ -14,12 +14,13 @@ namespace IncaTechnologies.ObjectsMessenger.Extensions
     public static class DependencyInjectionExtensions
     {
         /// <summary>
-        /// Registers all the <see cref="Messenger"/> contained in the given <paramref name="assembly"/>.
+        /// Add as singleton the <see cref="MessengerHub"/> and all the <see cref="Messenger"/> implementations contained in the given <paramref name="assembly"/>. Also registers all <see cref="Messenger"/> into the <see cref="MessengerHub"/>.
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/></param>
         /// <param name="assembly">Where to look for <see cref="Messenger"/> to register.</param>
+        /// <param name="messengerHub">It is possible to specify a <see cref="MessengerHub"/> different form <see cref="MessengerHub.Default"/>. Mainly for test purposes.</param>
         /// <returns></returns>
-        public static IServiceCollection RegisterMessengers(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection RegisterMessengers(this IServiceCollection services, Assembly assembly, MessengerHub? messengerHub = null)
         {
             var messengerTypes = assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(Messenger)));
 
@@ -28,14 +29,16 @@ namespace IncaTechnologies.ObjectsMessenger.Extensions
                 services.AddSingleton(type);
             }
 
+            messengerHub ??= MessengerHub.Default;
+
             services.AddSingleton(sp => 
             { 
-                foreach(var messenger in sp.GetServices<Messenger>())
+                foreach(var messengerType in messengerTypes)
                 {
-                    MessageHub.Default.RegisterMessenger(messenger);
+                    messengerHub.RegisterMessenger((Messenger)sp.GetService(messengerType));
                 }
 
-                return MessageHub.Default; 
+                return messengerHub; 
             });
 
             return services;
