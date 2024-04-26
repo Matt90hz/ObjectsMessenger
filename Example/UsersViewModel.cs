@@ -1,4 +1,6 @@
-﻿namespace Example;
+﻿using IncaTechnologies.ObjectsMessenger;
+
+namespace Example;
 
 public sealed class UsersViewModel(CurrentUserMessenger _currentUserMessenger)
 {
@@ -9,8 +11,9 @@ public sealed class UsersViewModel(CurrentUserMessenger _currentUserMessenger)
         get => _currentUser;
         set
         {
-            _currentUser = value;
-            _currentUserMessenger.Send(this);
+            _currentUserMessenger.SetAndSend(this, ref _currentUser, value);
+            //_currentUser = value;
+            //_currentUserMessenger.Send(this);
         }
     }
 

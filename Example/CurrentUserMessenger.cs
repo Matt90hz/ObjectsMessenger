@@ -12,7 +12,5 @@ public sealed class CurrentUserMessenger : Messenger<UsersViewModel, EditUserVie
 
     protected override void ReceiveMessage(EditUserViewModel receiver, User? message) => receiver.User = message;
 
-    protected override User? SendMessage(UsersViewModel sender) => sender.CurrentUser;
-
-    override 
+    protected override User? SendMessage(UsersViewModel sender) => sender.CurrentUser; 
 }
