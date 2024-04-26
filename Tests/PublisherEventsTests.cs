@@ -6,18 +6,17 @@ using Tests.Utililties;
 
 namespace Tests;
 
-public sealed class MessengerEventsTests
+public sealed class PublisherEventsTests
 {
     [Fact]
     public void WhenMessageIsReceived_ShouldEmitReceiving()
     {
         //arrange
-        Receiver receiver = new();
-        GuidMessenger messenger = new();
-        using var monitor = messenger.Events.ToEvent().Monitor();
+        GuidPublisher publisher = new();
+        using var monitor = publisher.Events.ToEvent().Monitor();
 
         //act
-        messenger.Receive(receiver);
+        publisher.Receive();
 
         //assert
         monitor
@@ -31,18 +30,17 @@ public sealed class MessengerEventsTests
     {
         //arrange
         Sender sender = new();
-        Receiver receiver = new();
-        GuidMessenger messenger = new();
-        using var monitor = messenger.Events.ToEvent().Monitor();
+        GuidPublisher publisher = new();
+        using var monitor = publisher.Events.ToEvent().Monitor();
 
         //act
-        messenger.Send(sender);
-        messenger.Receive(receiver);
+        publisher.Send(sender);
+        publisher.Receive();
 
         //assert
         monitor
             .Should()
-            .Raise(nameof(IEventSource<Guid>.OnNext))
+            .Raise(nameof(monitor.Subject.OnNext))
             .WithArgs<MessengerEvent>(ev => ev == MessengerEvent.Received);
     }
 
@@ -52,14 +50,14 @@ public sealed class MessengerEventsTests
         //arrange
         Sender sender = new();
         Receiver receiver = new();
-        GuidMessenger messenger = new();
+        GuidPublisher publisher = new();
         List<MessengerEvent> messengerEvents = [];
 
-        messenger.Events.Skip(2).Subscribe(ev => messengerEvents.Add(ev));
+        publisher.Events.Skip(2).Subscribe(ev => messengerEvents.Add(ev));
 
         //act
-        messenger.Send(sender);
-        messenger.Receive(receiver);
+        publisher.Send(sender);
+        publisher.Receive();
 
         //assert
         messengerEvents.Should().Equal([MessengerEvent.Receiving, MessengerEvent.Received]);
@@ -70,30 +68,11 @@ public sealed class MessengerEventsTests
     {
         //arrange
         Receiver receiver = new();
-        GuidMessenger messenger = new();
-        using var monitor = messenger.Events.ToEvent().Monitor();
+        GuidPublisher publisher = new();
+        using var monitor = publisher.Events.ToEvent().Monitor();
 
         //act
-        messenger.Receive(receiver);
-
-        //assert
-        monitor
-            .Should()
-            .Raise(nameof(IEventSource<Guid>.OnNext))
-            .WithArgs<MessengerEvent>(ev => ev == MessengerEvent.ReceiveFailed);
-    }
-
-    [Fact]
-    public void WhenMessageAreadyReceived_ShouldEmitReceivedFailed()
-    {
-        //arrange
-        Receiver receiver = new();
-        GuidMessenger messenger = new();
-        using var monitor = messenger.Events.ToEvent().Monitor();
-
-        //act
-        messenger.Receive(receiver);
-        messenger.Receive(receiver);
+        publisher.Receive();
 
         //assert
         monitor
@@ -107,16 +86,16 @@ public sealed class MessengerEventsTests
     {
         //arrange
         Sender sender = new();
-        GuidMessenger messenger = new();
-        using var monitor = messenger.Events.ToEvent().Monitor();
+        GuidPublisher publisher = new();
+        using var monitor = publisher.Events.ToEvent().Monitor();
 
         //act
-        messenger.Send(sender);
+        publisher.Send(sender);
 
         //assert
         monitor
             .Should()
-            .Raise(nameof(IEventSource<Guid>.OnNext))
+            .Raise(nameof(monitor.Subject.OnNext))
             .WithArgs<MessengerEvent>(ev => ev == MessengerEvent.Sended);
     }
 
@@ -125,16 +104,16 @@ public sealed class MessengerEventsTests
     {
         //arrange
         Sender sender = new();
-        GuidMessenger messenger = new();
-        using var monitor = messenger.Events.ToEvent().Monitor();
+        GuidPublisher publisher = new();
+        using var monitor = publisher.Events.ToEvent().Monitor();
 
         //act
-        messenger.Send(sender);
+        publisher.Send(sender);
 
         //assert
         monitor
             .Should()
-            .Raise(nameof(IEventSource<Guid>.OnNext))
+            .Raise(nameof(monitor.Subject.OnNext))
             .WithArgs<MessengerEvent>(ev => ev == MessengerEvent.Sending);
     }
 
@@ -143,13 +122,13 @@ public sealed class MessengerEventsTests
     {
         //arrange
         Sender sender = new();
-        GuidMessenger messenger = new();
+        GuidPublisher publisher = new();
         List<MessengerEvent> messengerEvents = [];
 
-        messenger.Events.Take(2).Subscribe(ev => messengerEvents.Add(ev));
+        publisher.Events.Take(2).Subscribe(ev => messengerEvents.Add(ev));
 
         //act
-        messenger.Send(sender);
+        publisher.Send(sender);
 
         //assert
         messengerEvents.Should().Equal([MessengerEvent.Sending, MessengerEvent.Sended]);

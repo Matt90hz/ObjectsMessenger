@@ -3,31 +3,31 @@ using Tests.Utililties;
 
 namespace Tests;
 
-public sealed class MessengerIsMessageSendedTests
+public sealed class PublisherIsMessageSendedTests
 {
     [Fact]
     public void WhenMessageIsSent_SholudBeTrue()
     {
         //arrange
         Sender sender = new();
-        GuidMessenger messenger = new();
+        GuidPublisher publisher = new();
 
         //act
-        messenger.Send(sender);
+        publisher.Send(sender);
 
         //assert
-        messenger.IsMessageSended.Should().BeTrue();
+        publisher.IsMessageSended.Should().BeTrue();
     }
 
     [Fact]
     public void WhenMessageIsNotSent_SholudBeFalse()
     {
         //arrange
-        GuidMessenger messenger = new();
+        GuidPublisher publisher = new();
 
         //act
 
         //assert
-        messenger.IsMessageSended.Should().BeFalse();
+        publisher.IsMessageSended.Should().BeFalse();
     }
 }
