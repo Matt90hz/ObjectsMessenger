@@ -26,7 +26,7 @@ public sealed class PublisherEventsTests
     }
 
     [Fact]
-    public void WhenMessageIsReceived_ShouldEmitReceived()
+    public void WhenMessageIsReceived_ShouldNotEmitReceived()
     {
         //arrange
         Sender sender = new();
@@ -38,29 +38,11 @@ public sealed class PublisherEventsTests
         publisher.Receive();
 
         //assert
-        monitor
+        monitor.OccurredEvents
+            .SelectMany(occuredEvent => occuredEvent.Parameters)
+            .Cast<MessengerEvent>()
             .Should()
-            .Raise(nameof(monitor.Subject.OnNext))
-            .WithArgs<MessengerEvent>(ev => ev == MessengerEvent.Received);
-    }
-
-    [Fact]
-    public void WhenMessageIsReceived_ShouldEmitReceivingAndThenReceived()
-    {
-        //arrange
-        Sender sender = new();
-        Receiver receiver = new();
-        GuidPublisher publisher = new();
-        List<MessengerEvent> messengerEvents = [];
-
-        publisher.Events.Skip(2).Subscribe(ev => messengerEvents.Add(ev));
-
-        //act
-        publisher.Send(sender);
-        publisher.Receive();
-
-        //assert
-        messengerEvents.Should().Equal([MessengerEvent.Receiving, MessengerEvent.Received]);
+            .NotContain(MessengerEvent.Received);
     }
 
     [Fact]

@@ -187,6 +187,9 @@ namespace IncaTechnologies.ObjectsMessenger
         /// <summary>
         /// Retrives the message sent.
         /// </summary>
+        /// <remarks>
+        /// This method will not trigger <see cref="MessengerEvent.Received"/>.
+        /// </remarks>
         /// <returns>The message sent.</returns>
         public TMessage Receive()
         {
@@ -199,8 +202,6 @@ namespace IncaTechnologies.ObjectsMessenger
 
                 return Default;
             }
-#warning This is not a good behavior to think about it
-            _events.OnNext(MessengerEvent.Received);
 
             return _message;
         }
