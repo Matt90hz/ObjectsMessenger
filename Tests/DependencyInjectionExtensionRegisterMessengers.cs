@@ -10,6 +10,7 @@ using FluentAssertions;
 using Tests.Utililties;
 using IncaTechnologies.ObjectsMessenger;
 using System.Reactive.Linq;
+using System.Reflection.Emit;
 
 namespace Tests;
 public sealed class DependencyInjectionExtensionRegisterMessengers
@@ -76,56 +77,119 @@ public sealed class DependencyInjectionExtensionRegisterMessengers
         monitorEvents.Should().Raise(nameof(monitorEvents.Subject.OnNext));
         monitorErrors.Should().Raise(nameof(monitorErrors.Subject.OnNext));
     }
-}
 
-public sealed class MessengerExtensionsSetAndSand
-{
     [Fact]
-    public void ValueOfThePrperty_ShouldBeSetted()
+    public void MessengerFromDifferentAssemblies_ShouldBeAllRegistered()
     {
         //arrange
-        Guid field1 = Guid.Empty;
-        Guid field2 = Guid.Empty;
-        Guid newGuid = Guid.NewGuid();
-        GuidMessenger messenger = new();
-        GuidPublisher publisher = new();
-        Sender sender = new();
+        var assemblyName1 = new AssemblyName("assembly1");
+        var assembly1 = AssemblyBuilder.DefineDynamicAssembly(assemblyName1, AssemblyBuilderAccess.Run);
+        var module1 = assembly1.DefineDynamicModule(assemblyName1.Name!);
+        var type1 = module1!
+            .DefineType("Messenger1", TypeAttributes.Public | TypeAttributes.Abstract, typeof(Messenger<object, object, object>))
+            .CreateType();
+        var type2 = module1!
+            .DefineType("Publisher1", TypeAttributes.Public | TypeAttributes.Abstract, typeof(Messenger<object, object>))
+            .CreateType();
+
+        var assemblyName2 = new AssemblyName("assembly2");
+        var assembly2 = AssemblyBuilder.DefineDynamicAssembly(assemblyName2, AssemblyBuilderAccess.Run);
+        var module2 = assembly2.DefineDynamicModule(assemblyName2.Name!);
+        var type3 = module2!
+            .DefineType("Messenger3", TypeAttributes.Public | TypeAttributes.Abstract, typeof(Messenger<object, object, object>))
+            .CreateType();
+        var type4 = module2!
+            .DefineType("Publisher4", TypeAttributes.Public | TypeAttributes.Abstract, typeof(Messenger<object, object>))
+            .CreateType();
+
+        var messengerHub = (MessengerHub)Activator.CreateInstance(typeof(MessengerHub), true)!;
+
+        IServiceCollection services = new ServiceCollection();
 
         //act
-        messenger.SetAndSend(sender, ref field1, newGuid);
-        publisher.SetAndSend(sender, ref field2, newGuid);
+        services.RegisterMessengers(assembly1, messengerHub);
+        services.RegisterMessengers(assembly2, messengerHub);
 
         //assert
-        field1.Should().Be(newGuid);
-        field2.Should().Be(newGuid);
+        services
+            .Select(serviceDescriptor => serviceDescriptor.ServiceType)
+            .Should()
+            .Contain(type1)
+            .And.Contain(type2)
+            .And.Contain(type3)
+            .And.Contain(type4);
     }
 
     [Fact]
-    public void ValueGetSet_ShouldBeAlsoSent()
+    public void MessengerFromDifferentAssemblies_ShouldBeAllRegisteredInMessengerHubAndTriggerEvents()
     {
         //arrange
-        Guid field = Guid.Empty;
-        Guid newGuid = Guid.NewGuid();
-        GuidMessenger messenger = new();
-        GuidPublisher publisher = new();
-        Sender sender = new();
+        var assemblyName1 = new AssemblyName("assembly1");
+        var assembly1 = AssemblyBuilder.DefineDynamicAssembly(assemblyName1, AssemblyBuilderAccess.Run);
+        var module1 = assembly1.DefineDynamicModule(assemblyName1.Name!);
+        var typeBuilder1 = module1!.DefineType("Messenger", TypeAttributes.Public, typeof(Messenger<object, object, object>));
 
-        var messengerEventsMonitor = messenger.Events.ToEvent().Monitor();
-        var publisherEventsMonitor = publisher.Events.ToEvent().Monitor();
+        var isMessagePreseverdGetMethod = typeBuilder1.DefineMethod("get_IsMessagePreserved", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.SpecialName | MethodAttributes.HideBySig, typeof(bool), Type.EmptyTypes);
+        var isMessagePreservedGetILGen = isMessagePreseverdGetMethod.GetILGenerator();
+        isMessagePreservedGetILGen.Emit(OpCodes.Ldc_I4_0);
+        isMessagePreservedGetILGen.Emit(OpCodes.Ret);
+
+        var receiveMessageMethod = typeBuilder1.DefineMethod("ReceiveMessage", MethodAttributes.Family | MethodAttributes.Virtual, null, [typeof(object), typeof(object)]);
+        var receiveMessageILGen = receiveMessageMethod.GetILGenerator();
+        receiveMessageILGen.Emit(OpCodes.Ret);
+
+        var sendMessageMethod = typeBuilder1.DefineMethod("SendMessage", MethodAttributes.Family | MethodAttributes.Virtual, typeof(object), [typeof(object)]);
+        var sendMessageILGen = sendMessageMethod.GetILGenerator();
+        sendMessageILGen.Emit(OpCodes.Ldnull);
+        sendMessageILGen.Emit(OpCodes.Ret);
+
+        var type1 = typeBuilder1.CreateType();
+
+        var assemblyName2 = new AssemblyName("assembly2");
+        var assembly2 = AssemblyBuilder.DefineDynamicAssembly(assemblyName2, AssemblyBuilderAccess.Run);
+        var module2 = assembly2.DefineDynamicModule(assemblyName2.Name!);
+        var typeBuilder2 = module2!.DefineType("Publisher", TypeAttributes.Public, typeof(Messenger<object, object>));
+
+        var isDefaultGetMethod = typeBuilder2.DefineMethod("get_Default", MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.SpecialName | MethodAttributes.HideBySig, typeof(object), Type.EmptyTypes);
+        var isDefaultGetILGen = isDefaultGetMethod.GetILGenerator();
+        isDefaultGetILGen.Emit(OpCodes.Ldc_I4_0);
+        isDefaultGetILGen.Emit(OpCodes.Ret);
+
+        var sendMessagePublishMethod = typeBuilder2.DefineMethod("SendMessage", MethodAttributes.Family | MethodAttributes.Virtual, typeof(object), [typeof(object)]);
+        var sendMessagePublishILGen = sendMessagePublishMethod.GetILGenerator();
+        sendMessagePublishILGen.Emit(OpCodes.Ldnull);
+        sendMessagePublishILGen.Emit(OpCodes.Ret);
+
+        var type2 = typeBuilder2.CreateType();
+
+        var messengerHub = (MessengerHub)Activator.CreateInstance(typeof(MessengerHub), true)!;
+
+        IServiceCollection services = new ServiceCollection();
+     
+        services.RegisterMessengers(assembly1, messengerHub);
+        services.RegisterMessengers(assembly2, messengerHub);
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        using var eventsMonitor = messengerHub.MessengersEvents.ToEvent().Monitor();
 
         //act
-        messenger.SetAndSend(sender, ref field, newGuid);
-        publisher.SetAndSend(sender, ref field, newGuid);
+        messengerHub = serviceProvider.GetRequiredService<MessengerHub>();
+        var messenger = (Messenger<object, object, object>)serviceProvider.GetRequiredService(type1);
+        var publisher = (Messenger<object, object>)serviceProvider.GetRequiredService(type2);
+
+        messenger.Send(default!);
+        publisher.Send(default!);
 
         //assert
-        messengerEventsMonitor
+        eventsMonitor
             .Should()
-            .Raise(nameof(messengerEventsMonitor.Subject.OnNext))
-            .WithArgs<MessengerEvent>(me => me == MessengerEvent.Sended);
+            .Raise(nameof(eventsMonitor.Subject.OnNext))
+            .WithArgs<(Messenger Messenger, MessengerEvent Event)>(arg => arg.Messenger.GetType().Equals(type1));
 
-        publisherEventsMonitor
+        eventsMonitor
             .Should()
-            .Raise(nameof(publisherEventsMonitor.Subject.OnNext))
-            .WithArgs<MessengerEvent>(me => me == MessengerEvent.Sended);
+            .Raise(nameof(eventsMonitor.Subject.OnNext))
+            .WithArgs<(Messenger Messenger, MessengerEvent Event)>(arg => arg.Messenger.GetType().Equals(type2));
     }
 }
