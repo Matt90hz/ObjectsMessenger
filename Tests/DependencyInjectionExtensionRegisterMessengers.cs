@@ -174,7 +174,7 @@ public sealed class DependencyInjectionExtensionRegisterMessengers
         using var eventsMonitor = messengerHub.MessengersEvents.ToEvent().Monitor();
 
         //act
-        messengerHub = serviceProvider.GetRequiredService<MessengerHub>();
+        _ = serviceProvider.GetRequiredService<MessengerHub>();//spawn the service to trigger the implementation factory
         var messenger = (Messenger<object, object, object>)serviceProvider.GetRequiredService(type1);
         var publisher = (Messenger<object, object>)serviceProvider.GetRequiredService(type2);
 

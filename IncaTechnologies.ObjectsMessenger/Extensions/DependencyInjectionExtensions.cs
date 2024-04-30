@@ -60,7 +60,7 @@ namespace IncaTechnologies.ObjectsMessenger.Extensions
                 return messengerHub;
             };
 
-            Func<IServiceProvider, MessengerHub> combinedImplementationFactory = (Func<IServiceProvider, MessengerHub>)Delegate.Combine(existingImplementationFactory, implementationFactory);
+            var combinedImplementationFactory = (Func<IServiceProvider, MessengerHub>)Delegate.Combine(existingImplementationFactory, implementationFactory);
 
             var serviceDescriptor = new ServiceDescriptor(typeof(MessengerHub), combinedImplementationFactory, ServiceLifetime.Singleton);
 
