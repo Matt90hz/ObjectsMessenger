@@ -24,12 +24,12 @@ namespace IncaTechnologies.ObjectsMessenger
         /// <summary>
         /// Sequence of events raised by all the registered <see cref="Messenger"/>.
         /// </summary>
-        public IObservable<(Messenger, MessengerEvent)> MessengersEvents => _events;
+        public IObservable<(Messenger Messenger, MessengerEvent Event)> MessengersEvents => _events;
 
         /// <summary>
         /// Sequence of error thrown by all the registered <see cref="Messenger"/>.
         /// </summary>
-        public IObservable<(Messenger, Exception)> MessengersErrors => _errors;
+        public IObservable<(Messenger Messenger, Exception Exception)> MessengersErrors => _errors;
 
         private MessengerHub() { }
 
