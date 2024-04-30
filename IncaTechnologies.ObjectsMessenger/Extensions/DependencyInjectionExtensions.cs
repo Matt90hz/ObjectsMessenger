@@ -1,9 +1,11 @@
 ﻿using IncaTechnologies.ObjectsMessenger;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace IncaTechnologies.ObjectsMessenger.Extensions
@@ -22,24 +24,47 @@ namespace IncaTechnologies.ObjectsMessenger.Extensions
         /// <returns></returns>
         public static IServiceCollection RegisterMessengers(this IServiceCollection services, Assembly assembly, MessengerHub? messengerHub = null)
         {
-            var messengerTypes = assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(Messenger)));
+            var messengerTypes = assembly
+                .GetTypes()
+                .Where(type => type.IsSubclassOf(typeof(Messenger)))
+                .ToArray();
 
+            return services
+                .AddSingletonMessengers(messengerTypes)
+                .AddSingletonMessengerHub(messengerTypes, messengerHub ?? MessengerHub.Default);
+        }
+
+        static IServiceCollection AddSingletonMessengers(this IServiceCollection services, IEnumerable<Type> messengerTypes)
+        {
             foreach (var type in messengerTypes)
             {
                 services.AddSingleton(type);
             }
 
-            messengerHub ??= MessengerHub.Default;
+            return services;
+        }
 
-            services.AddSingleton(sp => 
-            { 
-                foreach(var messengerType in messengerTypes)
+        static IServiceCollection AddSingletonMessengerHub(this IServiceCollection services, IEnumerable<Type> messengerTypes,  MessengerHub messengerHub)
+        {
+            Func<IServiceProvider, MessengerHub>? existingImplementationFactory = services
+                .FirstOrDefault(serviceDescriptior => serviceDescriptior.ServiceType == typeof(MessengerHub))?
+                .ImplementationFactory as Func<IServiceProvider, MessengerHub>;
+
+            Func<IServiceProvider, MessengerHub> implementationFactory = serviceProvider =>
+            {
+                foreach (var messengerType in messengerTypes)
                 {
-                    messengerHub.RegisterMessenger((Messenger)sp.GetService(messengerType));
+                    messengerHub.RegisterMessenger((Messenger)serviceProvider.GetService(messengerType));
                 }
 
-                return messengerHub; 
-            });
+                return messengerHub;
+            };
+
+            Func<IServiceProvider, MessengerHub> combinedImplementationFactory = (Func<IServiceProvider, MessengerHub>)Delegate.Combine(existingImplementationFactory, implementationFactory);
+
+            var serviceDescriptor = new ServiceDescriptor(typeof(MessengerHub), combinedImplementationFactory, ServiceLifetime.Singleton);
+
+            services.Replace(serviceDescriptor);
 
             return services;
         }
