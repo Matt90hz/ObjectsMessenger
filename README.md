@@ -174,4 +174,4 @@ public sealed class UsersViewModel
 ```
 
 ## Contribute
-Do you like this library, and do you want to make it better? Just open an issue on [GitHub](https://github.com/Matt90hz/ObjectsMessenger);
+Do you like this library, and do you want to make it better? Just open an issue on [GitHub](https://github.com/Matt90hz/ObjectsMessenger).
