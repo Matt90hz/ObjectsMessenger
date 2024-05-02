@@ -12,7 +12,7 @@
 	<NeutralLanguage>en</NeutralLanguage>
 	<VersionPrefix>1.0.0</VersionPrefix>
 	<VersionSuffix>beta</VersionSuffix>
-	<Description>Utility class to provide objects comunication.</Description>
+	<Description>Utility  framework to provide objects communication.</Description>
 	<Copyright>IncaTechnologies - 2024</Copyright>
 	<PackageProjectUrl>https://github.com/Matt90hz/ObjectsMessenger</PackageProjectUrl>
 	<PackageIcon>D:\IncaTechnologies\IncaTechnologies_logo_128x128.png</PackageIcon>
@@ -23,6 +23,8 @@
 	<PackageLicenseFile>..\LICENSE.txt</PackageLicenseFile>
 	<IncludeSymbols>True</IncludeSymbols>
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	<PackageTags>messenger;message;communication;transfer;channel;send;receive;publish;</PackageTags>
+	<PackageReleaseNotes>1.0.0-beta : Release</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
