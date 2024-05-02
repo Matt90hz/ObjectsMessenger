@@ -1,27 +1,27 @@
 # ObjectsMessenger
-Utility class to provide objects comunication.
+Utility class to provide objects communication.
 
 ## What it should do?
-- [x] Allow comunication between objects.
-- [x] It should enforce the existence of a message channel.
-- [x] Should eforce that only senders can send and only receivers can receive.
+- [x] Allow communication between objects.
+- [x] Enforce the existence of a message channel.
+- [x] Ensure that only senders can send messages, and only receivers can receive them.
 - [x] Support dependency injection.
-- [ ] Support asyncronous comunication. 
-- [x] The comunication should be defined in a self contained object. 
-- [x] Events should be exposed about the comunication process.
-- [x] It should be allowed publication of a message to anyone. 
-- [x] The messenging process should not be bound to properties. 
-- [x] It should be possible to pick if the message has to be persisted or deleted after delivery. 
-- [x] There should be no memory leaks due to the storing of the sender. 
+- [ ] Support asyncronous communication. 
+- [x] Define communication in a self-contained object.
+- [x] Expose events related to the communication process.
+- [x] Optionally deliver messages to anyone. 
+- [x] Not bind the messaging process to properties.
+- [x] Provide an option to persist or delete messages after delivery.
+- [x] Not cause memory leaks due to sender storage.
 - [ ] Only interfaces should be used to interact with the system. 
-- [x] Should be present a utility to deal with property accessors.
-- [x] The system should not rely on exceptions.
+- [x] Include a utility for dealing with property accessors.
+- [x] Not rely on exceptions.
 - [x] Rely on observables instead of events.
  
 ## How it is done?
-Implement `Messenger<TSender, TReceiver, TMessage>` to create a single channel comunication between two objects. Otherwise implement `Messenger<TSender, TReceiver>` to establish a multichannel comunication, where one object can dispatch messages to anyone.
+Implement `Messenger<TSender, TReceiver, TMessage>` to create a single-channel communication between two objects. Otherwise, implement `Messenger<TSender, TReceiver>` to establish multichannel communication, where one object can dispatch messages to anyone.
 
-Optionally, register the messengers in the `MessengerHub` to handle all the messengers events and errors.
+Optionally, register the messengers in the `MessengerHub` to handle all messenger events and errors.
 
 ### Implement a single channel messenger
 Given a sender class like:
@@ -50,7 +50,7 @@ public sealed class EditUserViewModel
 }
 ```
 
-Let assume that you want to deliver the current user from `UsersViewModel` to `EditUserViewModel`. Than implement a single channel messenger like:
+Let’s assume that you want to deliver the current user from `UsersViewModel` to `EditUserViewModel`. Then, implement a single-channel messenger like:
 ```csharp
 public sealed class CurrentUserMessenger : Messenger<UsersViewModel, EditUserViewModel, User?>
 {
@@ -62,7 +62,7 @@ public sealed class CurrentUserMessenger : Messenger<UsersViewModel, EditUserVie
 }
 ```
 
-Refactor `UsersViewModel` and `EditUserViewModel` to send and receive the message as appropriate. What follows is just an example of how the cumunication process might be arranged.
+Refactor `UsersViewModel` and `EditUserViewModel` to send and receive the message as appropriate. What follows is just an example of how the communication process might be arranged.
 ```csharp
 public sealed class UsersViewModel
 {
@@ -96,7 +96,7 @@ public sealed class EditUserViewModel
 }
 ```
 ### Implement a multichannel messenger
-Implement a multi channel `Messenger` does not differ much from the single channel. First implement `Messenger<TSender, TMessage>`.
+Implementing a multi-channel `Messenger` does not differ much from the single channel. First, implement `Messenger<TSender, TMessage>`.
 ```csharp
 public sealed class CurrentUSerPublisher : Messenger<UsersViewModel, User?>
 {
@@ -106,7 +106,7 @@ public sealed class CurrentUSerPublisher : Messenger<UsersViewModel, User?>
 }
 ```
 
-The sending process remains the same whereas the receiving process let you get the message direcly. Like so:
+The sending process remains the same, whereas the receiving process lets you get the message directly. Like so:
 ```csharp
 public sealed class EditUserViewModel
 {
@@ -120,13 +120,13 @@ public sealed class EditUserViewModel
 ```
 
 ### Register the messenger
-It is possible to register any `Messenger` into the `MessengerHub` this will allow the handle of the messengers events in a single place.
+It is possible to register any `Messenger` into the `MessengerHub`. This will allow handling the messenger’s events in a single place.
 
 ```csharp
 MessengerHub.Default.RegisterMessenger(currentUserMessenger);
 ```
 
-Doing this will let the creation of behaviours. For example the `EditUserViewModel` from before can be refactored to better separate concenrs.
+Doing this will allow the creation of behaviors. For example, the `EditUserViewModel` from before can be refactored to better separate concerns.
 
 ```csharp
 public sealed class ReceiveCurrentUserBehavior
@@ -141,7 +141,7 @@ public sealed class ReceiveCurrentUserBehavior
 ```
 
 ### Notes
-The use of `IObservable` instead of the CLR events makes the system very flexible. For more information check [System.Reactive](https://github.com/dotnet/reactive).
+The use of `IObservable` instead of CLR events makes the system very flexible. For more information, check [System.Reactive](https://github.com/dotnet/reactive).
 
 ## Utilities
 
@@ -149,10 +149,10 @@ The use of `IObservable` instead of the CLR events makes the system very flexibl
 ```csharp
 services.RegisterMessengers(Assembly.GetExecutingAssembly());
 ```
-This call not only will register all `Messenger` in the given assembly. Also registers all the `Messenger` in the `MessengerHub`.
+This call not only registers all `Messenger` instances in the given assembly, but also registers all the `Messenger` instances in the `MessengerHub`.
 
 ### Property setter
-The `SetAndSend(...)` function can be used to simplify the the sending process for a property.
+The `SetAndSend(...)` function can be used to simplify the sending process for a property.
 
 ```csharp
 public sealed class UsersViewModel
@@ -174,4 +174,4 @@ public sealed class UsersViewModel
 ```
 
 ## Contribute
-Do you like this library and you want to make it better? Just open an issue on [GitHub](https://github.com/Matt90hz/ObjectsMessenger);
+Do you like this library, and do you want to make it better? Just open an issue on [GitHub](https://github.com/Matt90hz/ObjectsMessenger);
