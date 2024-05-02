@@ -2,7 +2,7 @@
 
 namespace Example;
 
-public sealed class UsersViewModel(CurrentUserMessenger _currentUserMessenger)
+public sealed class UsersViewModel(CurrentUserMessenger _currentUserMessenger, CurrentUserPublisher _currentUserPublisher)
 {
     private User? _currentUser;
 
@@ -12,8 +12,7 @@ public sealed class UsersViewModel(CurrentUserMessenger _currentUserMessenger)
         set
         {
             _currentUserMessenger.SetAndSend(this, ref _currentUser, value);
-            //_currentUser = value;
-            //_currentUserMessenger.Send(this);
+            _currentUserPublisher.Send(this);
         }
     }
 

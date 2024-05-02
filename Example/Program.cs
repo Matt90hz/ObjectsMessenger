@@ -1,8 +1,10 @@
 ﻿using Example;
+using System.Reactive.Linq;
 
 CurrentUserMessenger currentUserMessenger = new();
-UsersViewModel usersViewModel = new(currentUserMessenger);
-EditUserViewModel viewModelEditUser = new(currentUserMessenger);
+CurrentUserPublisher currentUserPublisher = new();
+UsersViewModel usersViewModel = new(currentUserMessenger, currentUserPublisher);
+EditUserViewModel viewModelEditUser = new(currentUserMessenger, currentUserPublisher);
 
 usersViewModel.CurrentUser = usersViewModel.Users.First();
 
