@@ -50,7 +50,7 @@ public sealed class EditUserViewModel
 }
 ```
 
-Let’s assume that you want to deliver the current user from `UsersViewModel` to `EditUserViewModel`. Then, implement a single-channel messenger like:
+Let's assume that you want to deliver the current user from `UsersViewModel` to `EditUserViewModel`. Then, implement a single-channel messenger like:
 ```csharp
 public sealed class CurrentUserMessenger : Messenger<UsersViewModel, EditUserViewModel, User?>
 {
@@ -120,7 +120,7 @@ public sealed class EditUserViewModel
 ```
 
 ### Register the messenger
-It is possible to register any `Messenger` into the `MessengerHub`. This will allow handling the messenger’s events in a single place.
+It is possible to register any `Messenger` into the `MessengerHub`. This will allow handling the messenger's events in a single place.
 
 ```csharp
 MessengerHub.Default.RegisterMessenger(currentUserMessenger);
