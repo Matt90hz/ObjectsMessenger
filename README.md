@@ -1,5 +1,5 @@
 # ObjectsMessenger
-Utility class to provide objects communication.
+Utility library to provide objects communication.
 
 ## What it should do?
 - [x] Allow communication between objects.
