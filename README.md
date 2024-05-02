@@ -19,7 +19,7 @@ Utility class to provide objects comunication.
 - [x] Rely on observables instead of events.
  
 ## How it is done?
-Implement `Messenger<TSender, TReceiver, TMessage>` to create a single channel comunication between two objects. Otherwise implement `Messenger<TSender, TReceiver>` to establish a multichannel comunication, where one object can dispatch messages to enyone.
+Implement `Messenger<TSender, TReceiver, TMessage>` to create a single channel comunication between two objects. Otherwise implement `Messenger<TSender, TReceiver>` to establish a multichannel comunication, where one object can dispatch messages to anyone.
 
 Optionally, register the messengers in the `MessengerHub` to handle all the messengers events and errors.
 
@@ -95,6 +95,29 @@ public sealed class EditUserViewModel
     }
 }
 ```
+### Implement a multichannel messenger
+Implement a multi channel `Messenger` does not differ much from the single channel. First implement `Messenger<TSender, TMessage>`.
+```csharp
+public sealed class CurrentUSerPublisher : Messenger<UsersViewModel, User?>
+{
+    public override User? Default => default;
+
+    protected override User? SendMessage(UsersViewModel sender) => sender.CurrentUser;
+}
+```
+
+The sending process remains the same whereas the receiving process let you get the message direcly. Like so:
+```csharp
+public sealed class EditUserViewModel
+{
+    public User? User { get; set; }
+
+    public EditUserViewModel(CurrentUserMessenger currentUserMessenger)
+    {
+        User = currentUserMessenger.Receive();
+    }
+}
+```
 
 ### Register the messenger
 It is possible to register any `Messenger` into the `MessengerHub` this will allow the handle of the messengers events in a single place.
@@ -126,4 +149,29 @@ The use of `IObservable` instead of the CLR events makes the system very flexibl
 ```csharp
 services.RegisterMessengers(Assembly.GetExecutingAssembly());
 ```
-This call not only will register all Messengers in the given assembly
+This call not only will register all `Messenger` in the given assembly. Also registers all the `Messenger` in the `MessengerHub`.
+
+### Property setter
+The `SetAndSend(...)` function can be used to simplify the the sending process for a property.
+
+```csharp
+public sealed class UsersViewModel
+{
+    private readonly CurrentUserMessenger _currentUserMessenger;
+
+    private User? _currentUser;
+
+    public User? CurrentUser
+    {
+        get => _currentUser;
+        set => _currentUserMessenger.SetAndSend(this, ref _currentUser, value);
+    }
+
+    public IEnumerable<User> Users { get; }
+
+    public UsersViewModel(...) {...}
+}
+```
+
+## Contribute
+Do you like this library and you want to make it better? Just open an issue on [GitHub](https://github.com/Matt90hz/ObjectsMessenger);
