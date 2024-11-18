@@ -15,7 +15,7 @@
 	<Description>Utility library to provide objects communication.</Description>
 	<Copyright>IncaTechnologies - 2024</Copyright>
 	<PackageProjectUrl>https://github.com/Matt90hz/ObjectsMessenger</PackageProjectUrl>
-	<PackageIcon>IncaTechnologies_logo_128x128.png</PackageIcon>
+	<!--<PackageIcon>IncaTechnologies_logo_128x128.png</PackageIcon>-->
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/Matt90hz/ObjectsMessenger.git</RepositoryUrl>
 	<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -28,10 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\IncaTechnologies\IncaTechnologies_logo_128x128.png" Link="_docs\IncaTechnologies_logo_128x128.png">
+    <!--<None Include="..\..\..\IncaTechnologies\IncaTechnologies_logo_128x128.png" Link="_docs\IncaTechnologies_logo_128x128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
-    </None>
+    </None>-->
 	<None Include="..\README.md" Link="_docs\README.md">
 		<Pack>True</Pack>
 		<PackagePath>\</PackagePath>

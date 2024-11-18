@@ -9,6 +9,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -18,6 +21,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --logger trx --no-build --configuration Release --verbosity normal
+    - name: Pack
+      run: dotnet pack "./IncaTechnologies.ObjectsMessenger/ObjectsMessenger.csproj" --configuration Release --no-build --output out
+    - name: Publish
+      run: dotnet nuget push "./out/*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/Matt90hz/index.json"
